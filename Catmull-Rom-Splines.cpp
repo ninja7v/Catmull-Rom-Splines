@@ -3,12 +3,11 @@
 //////////////
 // Libraries
 //////////////
-#include <iostream>
 #include <GL/glut.h>
-//#include <math.h>
+#include <iostream>
 #include <list>
-#include <chrono>
 #include <stdexcept> 
+#include <chrono>
 
 ////////////
 // Classes
@@ -56,16 +55,14 @@ public:
    void updateTangent(Point* P1, Point* P2) {
       try {
          float norm = P1->distance(P2);
-         if (norm == 0) {
+         if (norm == 0)
             throw std::runtime_error("Attempted to divide by Zero\n");
-         }
          tx = (P2->x - P1->x) / norm;
          ty = (P2->y - P1->y) / norm;
       }
       catch (std::runtime_error& e) {
          std::cout << e.what();
       };
-      std::cout << "Tangent = (" << tx << "," << ty << ")" << std::endl;
    }
 };
 
@@ -133,8 +130,7 @@ public:
          glVertex2f(x1, y1);
          glEnd();
          if (curveClosed) {
-            auto t0 = std::chrono::high_resolution_clock::now();
-            auto t1 = t0;
+            auto t0 = std::chrono::high_resolution_clock::now(), t1 = t0;
             do { t1 = std::chrono::high_resolution_clock::now(); }
             while (std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() < 3);
             glFlush();
@@ -194,31 +190,36 @@ void update(int button, int state, int X, int Y) {
          default:
             if (Points.size() != Curve.size()) {
                if (P->distance(Points.front()) < 0.1) {
-                  delete P;
-                  it1 = prev(Points.end());
-                  Points.back()->updateTangent(*--it1, Points.front());
-                  it0 = Points.begin();
-                  Points.front()->updateTangent(Points.back(), *++it0);
-                  it0 = prev(Points.end());
-                  it1 = prev(Points.end());
-                  Spline* S = new Spline(*--(--it0), *--it1, Points.back(), Points.front());
-                  std::cout << "test" << std::endl;
-                  Curve.push_back(S);
-                  std::cout << "Spline (" << Points.size() - 1 << ") -> (" << Points.size() << ") added" << std::endl;
-                  it0 = prev(Points.end());
-                  it1 = Points.begin();
-                  Spline* Send = new Spline(*--it0, Points.back(), Points.front(), *++it1);
-                  Curve.push_back(Send);
-                  std::cout << "Spline (" << Points.size() << ") -> (" << 1 << ") added" << std::endl;
-                  it0 = Points.begin();
-                  it1 = Points.begin();
-                  Spline* Sbegin = new Spline(Points.back(), Points.front(), *++it0, *++(++it1));
-                  Curve.push_front(Sbegin);
-                  std::cout << "Spline (" << 1 << ") -> (" << 2 << ") added" << std::endl;
-                  std::cout << "Curve closed" << std::endl;
-                  Curves.push_back(Curve);
-                  Curve.clear();
-                  Points.clear();
+                  if (prev(prev(Points.end())) != Points.begin()) {
+                     delete P;
+                     it1 = prev(Points.end());
+                     Points.back()->updateTangent(*--it1, Points.front());
+                     it0 = Points.begin();
+                     Points.front()->updateTangent(Points.back(), *++it0);
+                     it0 = prev(Points.end());
+                     it1 = prev(Points.end());
+                     Spline* S = new Spline(*--(--it0), *--it1, Points.back(), Points.front());
+                     std::cout << "test" << std::endl;
+                     Curve.push_back(S);
+                     std::cout << "Spline (" << Points.size() - 1 << ") -> (" << Points.size() << ") added" << std::endl;
+                     it0 = prev(Points.end());
+                     it1 = Points.begin();
+                     Spline* Send = new Spline(*--it0, Points.back(), Points.front(), *++it1);
+                     Curve.push_back(Send);
+                     std::cout << "Spline (" << Points.size() << ") -> (" << 1 << ") added" << std::endl;
+                     it0 = Points.begin();
+                     it1 = Points.begin();
+                     Spline* Sbegin = new Spline(Points.back(), Points.front(), *++it0, *++(++it1));
+                     Curve.push_front(Sbegin);
+                     std::cout << "Spline (" << 1 << ") -> (" << 2 << ") added" << std::endl;
+                     std::cout << "Curve closed" << std::endl;
+                     Curves.push_back(Curve);
+                     Curve.clear();
+                     Points.clear();
+                  }
+                  else {
+                     delete P;
+                  }
                }
                else {
                   it0 = prev(Points.end());
@@ -238,14 +239,9 @@ void update(int button, int state, int X, int Y) {
       } break;
    case GLUT_RIGHT_BUTTON:
       if (state == GLUT_UP) {
-         std::list<Point*>::iterator it0;
-         for (Point* p : Points) {
-            if (pow(pow(p->x - X, 2) + pow(p->y - Y, 2), 0.5) < 5) {
-               delete p;
-               std::cout << "Point deleted" << std::endl;
-               break;
-            }
-         }
+         Points.clear();
+         Curve.clear();
+         std::list<Point*>::iterator it;
       } break;
    case GLUT_MIDDLE_BUTTON:
       if (state == GLUT_UP) {
@@ -260,6 +256,8 @@ void init() {
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+   // To set the background color active
+   glutBitmapCharacter(GLUT_BITMAP_8_BY_13, 1);
 }
 
 //////////////////
@@ -270,9 +268,9 @@ int main(int argc, char* argv[]) {
    glutInit(&argc, argv);
    // Set Display Mode
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-   // Set the window size
+   // Set window size
    glutInitWindowSize(1000, 700);
-   // Set the window position
+   // Set window position
    glutInitWindowPosition(200, 200);
    // Create the window
    glutCreateWindow("Catmull-Rom Splines");
