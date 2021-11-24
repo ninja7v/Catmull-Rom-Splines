@@ -1,6 +1,6 @@
 # ➰ Catmull-Rom Splines
 
-**Catmull-Rom-Splines interpolaltion coded in C++ by Luc PREVOST.**
+**Catmull-Rom Splines interpolaltion coded in C++ by Luc PREVOST.**
 
 ![DS_splines](https://user-images.githubusercontent.com/52052772/143148529-8ae15b05-7f18-412c-8920-01b144027902.png)
 
