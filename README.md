@@ -1,4 +1,4 @@
-# ➰ Catmull-Rom-Splines
+# ➰ Catmull-Rom Splines
 
 **Catmull-Rom-Splines interpolaltion coded in C++ by Luc PREVOST.**
 
