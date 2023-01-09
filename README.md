@@ -2,7 +2,7 @@
 
 **Catmull-Rom Splines interpolaltion coded in C++ by Luc PREVOST.**
 
-![Jeannette](https://user-images.githubusercontent.com/52052772/211409082-909c9f5e-38f4-48ee-830d-77a4926113a5.gif)
+![Jeannette_slow](https://user-images.githubusercontent.com/52052772/211410452-ca849447-f7be-4e48-81e7-95135ae69bb5.gif)
 
 📃 INSTRUCTIONS
 ============
